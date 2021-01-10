@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="timer.cpp" />
+    <ClCompile Include="UDP_com.cpp" />
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Objects.cpp" />
+    <ClCompile Include="Collisions.cpp" />
+    <ClCompile Include="ran.cpp" />
+    <ClCompile Include="ran2.cpp" />
+    <ClCompile Include="ran3.cpp" />
+    <ClCompile Include="Audio.cpp" />
+    <ClCompile Include="UDP_com6.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{9a630993-7eec-4f54-8cd9-17b20780e286}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="2D Graphics lib">
+      <UniqueIdentifier>{a90769ba-09f9-4f08-a6cc-1efbb4437a47}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Objects.h" />
+    <ClInclude Include="ran.h" />
+    <ClInclude Include="timer.h" />
+    <ClInclude Include="Audio.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="2D_graphics_ver1.lib" />
+  </ItemGroup>
+</Project>
