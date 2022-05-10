@@ -61,6 +61,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 	game.spriteObject[BACKGROUND]->SetScale(width/game.spriteObject[BACKGROUND]->width, height/game.spriteObject[BACKGROUND]->height);
 
 	auto lastTime = std::chrono::steady_clock::now();
+	auto startTime = std::chrono::steady_clock::now();
 	std::string txt = "Hello World";
 	Text Hello(txt);
 
@@ -82,13 +83,16 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 		txt += "," + std::to_string(game.spriteObject[PLAYER_1]->position.y) + "\n Time = " + elapsed_string;
 		txt += "\n Score: " + std::to_string(game.score);
 		txt += "\n Ammo: " + std::to_string(game.ammo);
+		std::string currentTime = std::to_string(int(std::chrono::duration<double>(current - startTime).count())) + 's';
+		txt += "\n Time: " + currentTime;
 		Hello.SetText(txt);
 		gfx.ClearBuffer(0.0f, 0.0f, 0.0f);
 		game.input();
-		game.objectMovement();
+		game.torpedoMovement();
 		game.update();
 		Hello.Draw(gfx.pContext, gfx.pDevice);
 		gfx.EndFrame();
+		//if (int(std::chrono::duration<double>(current - startTime).count()) > 10) { break; }
 		lastTime = current;
 	}
 
@@ -98,7 +102,7 @@ int CALLBACK WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance,
 WNDCLASSEX window(HINSTANCE &hInstance, HINSTANCE &hPrevInstance, LPSTR &lpCmdLine, int &nCmdShow)
 {
 
-	const auto pClassName = L"wtv_man";
+	const auto pClassName = L"Game";
 
 	WNDCLASSEX wc = { 0 };
 	wc.cbSize = sizeof(wc);

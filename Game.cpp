@@ -1,6 +1,6 @@
 #include "Game.h"
 
-World::World(bool multiPlayer, Graphics &gfx)
+World::World(bool multiPlayer, Graphics& gfx)
 {
 	this->gfx.reset(&gfx);
 
@@ -52,7 +52,7 @@ void World::input()
 
 	if (y > 800) { y = 800; }
 	else if (y < 0) { y = 0; }
-	
+
 	/*
 	//switch(quadrant) {
 	//
@@ -134,48 +134,42 @@ void World::input()
 	//
 	//}
 	*/
-	
 
 	islandCollision(x, y);
 	coinCollision(x, y);
 
-
 	spriteObject[PLAYER_1]->SetRot(rotation);
 	spriteObject[PLAYER_1]->SetPos(x, y);
-
 }
-
 
 void World::update()
 {
-	for (auto &x : spriteObject) {
-
-		if(x != nullptr)
-			x->Draw(gfx->pContext); 
+	for (auto& x : spriteObject) {
+		if (x != nullptr)
+			x->Draw(gfx->pContext);
 	}
 }
 
 void World::coinCollision(float& x, float& y)
 {
-	
-	for (int i = 3; i <= 7; i++) {
-
+	for (int i = COIN_1; i <= COIN_5; i++) {
 		if (spriteObject[i] == nullptr) { continue; }
 
-		float distanceX = x - spriteObject[i]->position.x ,
+		if (ObjectIslandCol(spriteObject[i]->position.x, spriteObject[i]->position.y)) {
+			std::pair<float, float> pos = randomPosition();
+			spriteObject[i]->SetPos(pos.first, pos.second);
+		}
+
+		float distanceX = x - spriteObject[i]->position.x,
 			distanceY = y - spriteObject[i]->position.y,
 			minDistance = 50.0,
 			distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
 
 		if (distance <= minDistance) {
-
 			score++;
-
-			std::random_device rd;
-			std::mt19937 mt(rd());
-			std::uniform_real_distribution<float> dist1(1.0, 1200.0);
-			std::uniform_real_distribution<float> dist2(1.0, 800.0);
-			spriteObject[i]->SetPos(dist1(mt), dist2(mt));
+			//If there is a collision with a coin then the coin is again randomly placed on the map.
+			std::pair<float, float> pos = randomPosition();
+			spriteObject[i]->SetPos(pos.first, pos.second);
 		}
 	}
 	return;
@@ -183,9 +177,8 @@ void World::coinCollision(float& x, float& y)
 
 void World::fireTorpedo()
 {
-	if(spriteObject[TORPEDO_MAIN] == nullptr && ammo < 5){
-
-		ammo++;
+	if (spriteObject[TORPEDO_MAIN] == nullptr && ammo > 0) {
+		ammo--;
 
 		spriteObject[TORPEDO_MAIN] = std::unique_ptr<Sprite>(new Sprite(4, gfx->pDevice));
 		spriteObject[TORPEDO_MAIN]->SetPos(spriteObject[PLAYER_1]->position.x, spriteObject[PLAYER_1]->position.y);
@@ -195,7 +188,7 @@ void World::fireTorpedo()
 	return;
 }
 
-void World::objectMovement()
+void World::torpedoMovement()
 {
 	if (spriteObject[TORPEDO_MAIN] != nullptr) {
 		float rotation = spriteObject[TORPEDO_MAIN]->rotation;
@@ -204,7 +197,7 @@ void World::objectMovement()
 		float x = spriteObject[TORPEDO_MAIN]->position.x;
 		float y = spriteObject[TORPEDO_MAIN]->position.y;
 
-		if(x < 0 || x > 1200 || y < 0 || y > 800){
+		if (x < 0 || x > 1200 || y < 0 || y > 800 || ObjectIslandCol(x, y)) {
 			spriteObject[TORPEDO_MAIN].release();
 		}
 	}
@@ -212,18 +205,50 @@ void World::objectMovement()
 	return;
 }
 
-void islandCollision(float &x, float &y)
+void World::torpedoCollision()
 {
-	float distanceX = x - 1200.0 / 2,
-		distanceY = y - 250.0, 
-		minDistance = 150.0, 
-		distance = sqrt(pow(distanceX, 2)+ pow(distanceY, 2));
 
-	if (distance <= (minDistance)) {
-		float unitX = (distanceX) / (minDistance);
-		float unitY = (distanceY) / (minDistance);
-		x = 1200.0/2 + (minDistance + 5.0) * unitX;
-		y = 250.0  + (minDistance + 5.0) * unitY;
+}
+
+void World::islandCollision(float& x, float& y)
+{
+	for (auto island : islandLocation) {
+		float distanceX = x - island[0] * scaleX,
+			distanceY = y - island[1] * scaleY,
+			minDistance = island[2],
+			distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+
+		if (distance <= (minDistance)) {
+			float unitX = (distanceX) / (minDistance);
+			float unitY = (distanceY) / (minDistance);
+			x = island[0] * scaleX + (minDistance + 5.0) * unitX;
+			y = island[1] * scaleY + (minDistance + 5.0) * unitY;
+			return;
+		}
 	}
 	return;
+}
+
+bool World::ObjectIslandCol(float x, float y)
+{
+	for (auto island : islandLocation) {
+		float distanceX = x - island[0] * scaleX,
+			distanceY = y - island[1] * scaleY,
+			minDistance = island[2],
+			distance = sqrt(pow(distanceX, 2) + pow(distanceY, 2));
+
+		if (distance <= (minDistance)) { return TRUE; }
+	}
+	return FALSE;
+}
+
+std::pair<float, float> randomPosition()
+{
+	//Outputs a random pair that will be used as the x and y coordinate.
+	std::random_device rd;
+	std::mt19937 mt(rd());
+	std::uniform_real_distribution<float> dist1(1.0, 1180.0);
+	std::uniform_real_distribution<float> dist2(1.0, 780.0);
+
+	return std::pair<int, int>(dist1(mt), dist2(mt));
 }

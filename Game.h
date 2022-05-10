@@ -38,7 +38,10 @@
 #define TORPEDO_MAIN 8
 #define TORPEDO_ENEMY 9
 
-void islandCollision(float& x, float& y);
+std::pair<float, float> randomPosition();
+
+
+//void islandCollision(float& x, float& y);
 
 //void coinCollision(float& x, float& y);
 
@@ -50,9 +53,11 @@ public:
 	~World();
 	void input();
 	void update();
-	void coinCollision(float& x, float& y);
+	void coinCollision(float& x, float& y);		//for detecting collisions between boats and coins.
+	void islandCollision(float& x, float& y);	//for detecting collisions between main boat and islands.
+	bool ObjectIslandCol(float x, float y);		//returns a flag for collisions between coins, torpedos and island.
 	void fireTorpedo();
-	void objectMovement();
+	void torpedoMovement();
 	void torpedoCollision();
 	void playerCollision();
 
@@ -60,9 +65,22 @@ public:
 	std::unique_ptr<Graphics> gfx;
 	int score;
 	int lives;
-	int ammo = 0;
+	int ammo = 5;
 	int quadrant;
 
 private:
+	//scales the image size to the window size.
+	float scaleX = 1200.0 / 1022.0;
+	float scaleY = 800.0 / 703.0;
+
+	//Island location coordinates { x, y, Radius}
+	float islandLocation[6][3] = {
+		{0.0,0.0,125.0},
+		{0.0,310.0,100.0},
+		{975.0,80.0,90.0},
+		{560.0,250.0,220.0},
+		{1000.0,417.0,30.0},
+		{960.0,640.0,75.0},
+	};
 
 };

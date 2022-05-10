@@ -30,10 +30,11 @@ public:
 	float throttle;
 	float rotation;
 	RECT imageDimensions;
+	DirectX::XMFLOAT2 scale;
 
 private:
 
-	DirectX::XMFLOAT2 scale;
+	//DirectX::XMFLOAT2 scale;
 	DirectX::XMFLOAT2 origin;
 
 	//RECT imageDimensions;
