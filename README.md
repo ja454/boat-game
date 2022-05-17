@@ -1,4 +1,2 @@
 # boat-game
-Boat Game made for class
-
-Made for mech 415
+Boat Game made with the use of the DirectX SDK.
